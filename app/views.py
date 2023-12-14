@@ -28,8 +28,8 @@ def index():
                 passvalue = form2.password.data
                 checkpassvalue = form2.checkpass.data
 
-                existing_user = models.Users.query.filter_by
-                (username=uservalue).first()
+                existing_user = models.Users.
+                query.filter_by(username=uservalue).first()
 
                 if existing_user is None:
                     if passvalue == checkpassvalue:

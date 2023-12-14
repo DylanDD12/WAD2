@@ -1,4 +1,8 @@
 from app import app, db, models
+from flask import (render_template, flash, redirect,
+                   url_for, request, jsonify, session)
+
+
 from .forms import SignUpForm
 from .forms import LogInForm
 from .forms import SetUpForm
@@ -8,11 +12,7 @@ from .forms import JoinGroupForm
 from .forms import LeaveGroupForm
 
 import os
-from flask import request
 from werkzeug.utils import secure_filename
-
-from flask import render_template, flash,
-redirect, url_for, request, jsonify, session
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -28,8 +28,9 @@ def index():
                 passvalue = form2.password.data
                 checkpassvalue = form2.checkpass.data
 
-                existing_user = models.Users.
-                query.filter_by(username=uservalue).first()
+                existing_user = models.Users.query.filter_by(
+                                                             username=uservalue
+                                                             ).first()
 
                 if existing_user is None:
                     if passvalue == checkpassvalue:
@@ -48,13 +49,19 @@ def index():
         elif 'login_submit' in request.form:
             # Form 1 (LogInForm) is submitted
             if form1.validate_on_submit():
-                logging_user = models.Users.query.
-                filter_by(username=form1.username.data).first()
+                logging_user = (models.Users.query.
+                                filter_by
+                                (
+                                 username=form1.username.data
+                                 ).first())
 
-                if logging_user is not None and
-                logging_user.password == form1.password.data:
-                    return redirect(url_for('home',
-                                            username=form1.username.data))
+                if (logging_user
+                    is not None and
+                    (logging_user.password ==
+                     form1.password.data)):
+                    return redirect(url_for
+                                    ('home',
+                                     username=form1.username.data))
                 else:
                     flash("Incorrect Username or Password", 'error')
 
@@ -107,8 +114,8 @@ def upload(username):
             file.save(file_path)
 
             # Update the user's profile image in the database
-            user = models.Users.query.
-            filter_by(username=username).first()
+            user = (models.Users.query.
+                    filter_by(username=username).first())
 
             user.profile_image = filename
             db.session.commit()
@@ -126,9 +133,10 @@ def get_suggestions_from_db(search_term):
 
 def get_group_suggestions_from_db(search_term):
     # Query the database to get suggestions based on the search term
-    suggestions = models.Groups.query.filter
-    (models.Groups.groupName.ilike(f"%{search_term}%")).
-    limit(5).all()
+    suggestions = (models.Groups.query.filter
+                   (models.Groups.groupName.
+                    ilike(f"%{search_term}%")).
+                   limit(5).all())
     return [group.groupName for group in suggestions]
 
 
@@ -147,8 +155,8 @@ def get_group_suggestions():
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower()
-    in app.config['ALLOWED_EXTENSIONS']
+    return ('.' in filename and filename.rsplit('.', 1)[1].lower()
+            in app.config['ALLOWED_EXTENSIONS'])
 
 
 @app.route('/groups/<string:username>', methods=['POST', 'GET'])
@@ -241,8 +249,8 @@ def setup(username):
     form1 = SetUpForm()
     if 'setup_submit' in request.form:
         if form1.validate_on_submit():
-            existing_user = models.Users.query.filter_by
-            (username=username).first()
+            existing_user = (models.Users.query.filter_by
+                             (username=username).first())
             existing_user.firstName = form1.firstName.data
             existing_user.secondName = form1.secondName.data
             existing_user.weight = form1.weight.data
